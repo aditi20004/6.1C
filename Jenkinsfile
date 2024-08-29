@@ -3,36 +3,37 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                // Example: Use Maven to build the project
                 script {
                     echo 'Building the project...'
-                    // For Windows, you might use a batch command instead of `sh`
-                    bat 'mvn clean install' // Use `bat` instead of `sh` for Windows
+                    // sh 'mvn clean install' // Uncomment if using Maven
                 }
             }
         }
         stage('Unit and Integration Tests') {
             steps {
+                // Example: Run tests
                 script {
                     echo 'Running unit and integration tests...'
-                    bat 'mvn test' // Use `bat` instead of `sh` for Windows
+                    // sh 'mvn test' // Uncomment if using Maven
                 }
             }
         }
         stage('Code Analysis') {
             steps {
+                // Example: Perform code analysis
                 script {
                     echo 'Performing code analysis...'
-                    // Assuming SonarQube is installed, otherwise adjust the command
-                    bat 'sonar-scanner' // Use `bat` instead of `sh` for Windows
+                    // sh 'sonar-scanner' // Uncomment if using SonarQube
                 }
             }
         }
         stage('Security Scan') {
             steps {
+                // Example: Perform security scan
                 script {
                     echo 'Performing security scan...'
-                    // Assuming Dependency-Check is installed, otherwise adjust the command
-                    bat 'dependency-check.bat' // Use `bat` instead of `sh` for Windows
+                    // sh 'dependency-check.sh' // Uncomment if using OWASP Dependency-Check
                 }
             }
         }
@@ -40,8 +41,7 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to staging server...'
-                    // Replace this with your Windows-specific deployment command
-                    bat 'deploy_to_staging.bat' // Example: Windows batch script
+                    // sh 'deploy_to_staging.sh' // Add your deployment script here
                 }
             }
         }
@@ -49,8 +49,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running integration tests on staging...'
-                    // Replace this with your Windows-specific test script
-                    bat 'run_staging_tests.bat' // Example: Windows batch script
+                    // sh 'run_staging_tests.sh' // Add your integration test script here
                 }
             }
         }
@@ -58,8 +57,7 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to production...'
-                    // Replace this with your Windows-specific deployment command
-                    bat 'deploy_to_production.bat' // Example: Windows batch script
+                    // sh 'deploy_to_production.sh' // Add your production deployment script here
                 }
             }
         }
@@ -68,12 +66,9 @@ pipeline {
         always {
             emailext (
                 subject: "Jenkins Build: ${currentBuild.fullDisplayName}",
-                body: """<p>Build status: ${currentBuild.currentResult}</p>
-                         <p>Please check the attached log for more details.</p>""",
+                body: "Build status: ${currentBuild.currentResult}",
                 to: 'aditi.shrivastav911@gmail.com',
-                attachLog: true,
-                compressLog: true,
-                mimeType: 'text/html'
+                attachLog: true
             )
         }
     }
