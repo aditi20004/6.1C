@@ -5,7 +5,8 @@ pipeline {
             steps {
                 script {
                     echo 'Building the project...'
-                    sh 'mvn clean install' // Uncomment if using Maven
+                    // For Windows, you might use a batch command instead of `sh`
+                    bat 'mvn clean install' // Use `bat` instead of `sh` for Windows
                 }
             }
         }
@@ -13,7 +14,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running unit and integration tests...'
-                    sh 'mvn test' // Uncomment if using Maven
+                    bat 'mvn test' // Use `bat` instead of `sh` for Windows
                 }
             }
         }
@@ -21,7 +22,8 @@ pipeline {
             steps {
                 script {
                     echo 'Performing code analysis...'
-                    sh 'sonar-scanner' // Uncomment if using SonarQube
+                    // Assuming SonarQube is installed, otherwise adjust the command
+                    bat 'sonar-scanner' // Use `bat` instead of `sh` for Windows
                 }
             }
         }
@@ -29,7 +31,8 @@ pipeline {
             steps {
                 script {
                     echo 'Performing security scan...'
-                    sh 'dependency-check.sh' // Uncomment if using OWASP Dependency-Check
+                    // Assuming Dependency-Check is installed, otherwise adjust the command
+                    bat 'dependency-check.bat' // Use `bat` instead of `sh` for Windows
                 }
             }
         }
@@ -37,7 +40,8 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to staging server...'
-                    sh 'deploy_to_staging.sh' // Add your deployment script here
+                    // Replace this with your Windows-specific deployment command
+                    bat 'deploy_to_staging.bat' // Example: Windows batch script
                 }
             }
         }
@@ -45,7 +49,8 @@ pipeline {
             steps {
                 script {
                     echo 'Running integration tests on staging...'
-                    sh 'run_staging_tests.sh' // Add your integration test script here
+                    // Replace this with your Windows-specific test script
+                    bat 'run_staging_tests.bat' // Example: Windows batch script
                 }
             }
         }
@@ -53,7 +58,8 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to production...'
-                    sh 'deploy_to_production.sh' // Add your production deployment script here
+                    // Replace this with your Windows-specific deployment command
+                    bat 'deploy_to_production.bat' // Example: Windows batch script
                 }
             }
         }
@@ -66,8 +72,8 @@ pipeline {
                          <p>Please check the attached log for more details.</p>""",
                 to: 'aditi.shrivastav911@gmail.com',
                 attachLog: true,
-                compressLog: true,  // Compresses log before attaching
-                mimeType: 'text/html'  // Email format set to HTML
+                compressLog: true,
+                mimeType: 'text/html'
             )
         }
     }
