@@ -67,7 +67,7 @@ pipeline {
             emailext (
                 subject: "Jenkins Build: ${currentBuild.fullDisplayName}",
                 body: "Build status: ${currentBuild.currentResult}",
-                to: 's222625356@deakin.edu.au',
+                to: 'aditi.shrivastav911@gmail.com',
                 attachLog: true
             )
         }
