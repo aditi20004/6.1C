@@ -3,37 +3,33 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Example: Use Maven to build the project
                 script {
                     echo 'Building the project...'
-                    // sh 'mvn clean install' // Uncomment if using Maven
+                    sh 'mvn clean install' // Uncomment if using Maven
                 }
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                // Example: Run tests
                 script {
                     echo 'Running unit and integration tests...'
-                    // sh 'mvn test' // Uncomment if using Maven
+                    sh 'mvn test' // Uncomment if using Maven
                 }
             }
         }
         stage('Code Analysis') {
             steps {
-                // Example: Perform code analysis
                 script {
                     echo 'Performing code analysis...'
-                    // sh 'sonar-scanner' // Uncomment if using SonarQube
+                    sh 'sonar-scanner' // Uncomment if using SonarQube
                 }
             }
         }
         stage('Security Scan') {
             steps {
-                // Example: Perform security scan
                 script {
                     echo 'Performing security scan...'
-                    // sh 'dependency-check.sh' // Uncomment if using OWASP Dependency-Check
+                    sh 'dependency-check.sh' // Uncomment if using OWASP Dependency-Check
                 }
             }
         }
@@ -41,7 +37,7 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to staging server...'
-                    // sh 'deploy_to_staging.sh' // Add your deployment script here
+                    sh 'deploy_to_staging.sh' // Add your deployment script here
                 }
             }
         }
@@ -49,7 +45,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running integration tests on staging...'
-                    // sh 'run_staging_tests.sh' // Add your integration test script here
+                    sh 'run_staging_tests.sh' // Add your integration test script here
                 }
             }
         }
@@ -57,7 +53,7 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to production...'
-                    // sh 'deploy_to_production.sh' // Add your production deployment script here
+                    sh 'deploy_to_production.sh' // Add your production deployment script here
                 }
             }
         }
@@ -66,9 +62,12 @@ pipeline {
         always {
             emailext (
                 subject: "Jenkins Build: ${currentBuild.fullDisplayName}",
-                body: "Build status: ${currentBuild.currentResult}",
+                body: """<p>Build status: ${currentBuild.currentResult}</p>
+                         <p>Please check the attached log for more details.</p>""",
                 to: 'aditi.shrivastav911@gmail.com',
-                attachLog: true
+                attachLog: true,
+                compressLog: true,  // Compresses log before attaching
+                mimeType: 'text/html'  // Email format set to HTML
             )
         }
     }
