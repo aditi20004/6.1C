@@ -58,7 +58,7 @@ pipeline {
                 failure {
                     emailext subject: "Pipeline Status: Failure - Deploy to Production",
                       body: "The deployment to production has failed.",
-                      to: "aditi.shrivastav911@gmail.com",
+                      to: "shrivastavaditi14.com",
                       attachmentsPattern: '**/*.log'
                 }
             }
