@@ -3,70 +3,65 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                script {
-                    echo 'Building the project...'
-                    // sh 'mvn clean install' // Uncomment if using Maven
-                }
+                echo 'Building the code using Maven'
+
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                script {
-                    echo 'Running unit and integration tests...'
-                    // sh 'mvn test' // Uncomment if using Maven
-                }
+                echo 'Running unit tests'
+
+                echo 'Running integration tests'
+
             }
         }
         stage('Code Analysis') {
             steps {
-                script {
-                    echo 'Performing code analysis...'
-                    // sh 'sonar-scanner' // Uncomment if using SonarQube
-                }
+                echo 'Integrating code analysis tool'
+                echo 'Tool used: SonarQube'
+
             }
         }
         stage('Security Scan') {
             steps {
-                script {
-                    echo 'Performing security scan...'
-                    // sh 'dependency-check.sh' // Uncomment if using OWASP Dependency-Check
-                }
+                echo 'Performing security scan using OWASP Dependency-Check'
+
             }
         }
         stage('Deploy to Staging') {
             steps {
-                script {
-                    echo 'Deploying to staging server...'
-                    // sh 'deploy_to_staging.sh' // Add your deployment script here
-                }
-            }
-            post {
-                always {
-                    emailext (
-                        subject: "Jenkins Build: ${currentBuild.fullDisplayName}",
-                        body: "Build status: ${currentBuild.currentResult}",
-                        to: 'aditi.shrivastav911@gmail.com',
-                        attachLog: true
-                    )
-                }
+                echo 'Deploying application to staging server using AWS CLI'
+                echo 'Tool used: AWS EC2'
+ 
             }
         }
         stage('Integration Tests on Staging') {
             steps {
-                script {
-                    echo 'Running integration tests on staging...'
-                    // sh 'run_staging_tests.sh' // Add your integration test script here
-                }
+                echo 'Running integration tests on staging environment'
+                echo 'Tool used: Selenium'
+
             }
         }
         stage('Deploy to Production') {
             steps {
-                script {
-                    echo 'Deploying to production...'
-                    // sh 'deploy_to_production.sh' // Add your production deployment script here
+                echo 'Deploying application to production server using AWS CLI'
+                echo 'Tool used: AWS EC2'
+
+            }
+            post{
+                success{
+                    emailext subject: "Pipeline Status: Success - Deploy to Production",
+                      body: "The deployment to production was successful.",
+                      to: "adityacalvin@gmail.com",
+                      attachmentsPattern: '**/*.log'
+                }
+                failure {
+                    emailext subject: "Pipeline Status: Failure - Deploy to Production",
+                      body: "The deployment to production has failed.",
+                      to: "aditi.shrivastav911@gmail.com",
+                      attachmentsPattern: '**/*.log'
                 }
             }
         }
     }
 }
-
