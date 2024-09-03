@@ -29,6 +29,16 @@ pipeline {
                     env.TEST_STATUS = 'PASSED' // Modify this based on actual test outcomes
                 }
             }
+            post {
+                always {
+                    echo 'Sending notification email for test stage...'
+                    mail to: "${env.RECIPIENT_EMAIL}",
+                         subject: "Test Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                         body: """Test stage completed with status: ${env.TEST_STATUS}
+                                  Logs attached for detailed review.""",
+                         attachLog: true
+                }
+            }
         }
 
         stage('Code Analysis') {
@@ -49,6 +59,16 @@ pipeline {
                     // Placeholder for security scan command
                     // Example: sh 'findsecbugs'
                     env.SECURITY_SCAN_STATUS = 'NO VULNERABILITIES FOUND' // Adjust accordingly
+                }
+            }
+            post {
+                always {
+                    echo 'Sending notification email for security scan stage...'
+                    mail to: "${env.RECIPIENT_EMAIL}",
+                         subject: "Security Scan Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                         body: """Security scan stage completed with status: ${env.SECURITY_SCAN_STATUS}
+                                  Logs attached for detailed review.""",
+                         attachLog: true
                 }
             }
         }
@@ -89,7 +109,7 @@ pipeline {
 
     post {
         always {
-            echo 'Sending notification email...'
+            echo 'Sending final notification email...'
             mail to: "${env.RECIPIENT_EMAIL}",
                  subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
                  body: """Pipeline execution details:
