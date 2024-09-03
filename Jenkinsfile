@@ -57,10 +57,14 @@ pipeline {
     }
     post {
         always {
-            mail to: "${RECIPIENT_EMAIL}",
-                 subject: "Jenkins Pipeline Status: ${currentBuild.fullDisplayName}",
-                 body: "The Jenkins Pipeline ${currentBuild.fullDisplayName} has completed. Check the logs attached.",
-                 attachLog: true
+            emailext (
+                subject: "Jenkins Pipeline Status: ${currentBuild.fullDisplayName}",
+                body: """<p>The Jenkins Pipeline ${currentBuild.fullDisplayName} has completed.</p>
+                         <p>Status: ${currentBuild.currentResult}</p>
+                         <p>Check the build details at: <a href='${BUILD_URL}'>${BUILD_URL}</a></p>""",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                to: "${RECIPIENT_EMAIL}"
+            )
         }
     }
 }
