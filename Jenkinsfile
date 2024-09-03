@@ -33,7 +33,7 @@ pipeline {
             post {
                 always {
                     // Send email notification with logs
-                    echo 'Sending notification email for Unit and Integration Tests...'
+                    echo 'Sending email with logs for Unit and Integration Tests...'
                     emailext attachmentsPattern: "${env.LOG_DIR}/unit_integration_tests.log",
                              to: "${env.RECIPIENT_EMAIL}",
                              subject: "Unit and Integration Tests - ${env.TEST_STATUS}",
@@ -65,7 +65,7 @@ pipeline {
             post {
                 always {
                     // Send email notification with logs
-                    echo 'Sending notification email for Security Scan...'
+                    echo 'Sending email with logs for Security Scan...'
                     emailext attachmentsPattern: "${env.LOG_DIR}/security_scan.log",
                              to: "${env.RECIPIENT_EMAIL}",
                              subject: "Security Scan - ${env.SECURITY_SCAN_STATUS}",
@@ -110,7 +110,7 @@ pipeline {
 
     post {
         always {
-            echo 'Sending final notification email...'
+            echo 'Sending final summary email...'
             mail to: "${env.RECIPIENT_EMAIL}",
                  subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
                  body: """Pipeline execution details:
