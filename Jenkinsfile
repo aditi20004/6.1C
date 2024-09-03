@@ -13,8 +13,9 @@ pipeline {
             steps {
                 echo 'Building the application using Maven...'
                 script {
-                    // Example: sh 'mvn clean install'
-                    env.BUILD_STATUS = 'SUCCESSFUL' // Modify this based on actual build outcome
+                    // Example command to build the application with Maven
+                    sh 'mvn clean install'
+                    env.BUILD_STATUS = 'SUCCESSFUL'
                 }
             }
         }
@@ -23,8 +24,9 @@ pipeline {
             steps {
                 echo 'Running unit and integration tests...'
                 script {
-                    // Example: sh 'mvn test'
-                    env.TEST_STATUS = 'PASSED' // Modify this based on actual test outcomes
+                    // Example command to run Maven tests
+                    sh 'mvn test'
+                    env.TEST_STATUS = 'PASSED'
                 }
             }
             post {
@@ -45,8 +47,9 @@ pipeline {
             steps {
                 echo 'Analyzing code with SonarQube...'
                 script {
-                    // Example: sh 'sonar-scanner'
-                    env.CODE_ANALYSIS_STATUS = 'COMPLETED' // Adjust based on actual results
+                    // Example command to run SonarQube scanner
+                    sh 'sonar-scanner'
+                    env.CODE_ANALYSIS_STATUS = 'COMPLETED'
                 }
             }
         }
@@ -55,8 +58,9 @@ pipeline {
             steps {
                 echo 'Performing security scan...'
                 script {
-                    // Example: sh 'findsecbugs'
-                    env.SECURITY_SCAN_STATUS = 'NO VULNERABILITIES FOUND' // Adjust accordingly
+                    // Example command to run security scan
+                    sh 'findsecbugs'
+                    env.SECURITY_SCAN_STATUS = 'NO VULNERABILITIES FOUND'
                 }
             }
             post {
@@ -77,8 +81,9 @@ pipeline {
             steps {
                 echo "Deploying to staging server: ${env.STAGING_SERVER}"
                 script {
-                    // Example: sh 'scp target/app.war user@${STAGING_SERVER}:/path/to/deploy'
-                    env.STAGING_DEPLOYMENT_STATUS = 'DEPLOYED' // Adjust based on outcome
+                    // Example command to deploy to the staging server
+                    sh "scp target/app.war user@${STAGING_SERVER}:/path/to/deploy"
+                    env.STAGING_DEPLOYMENT_STATUS = 'DEPLOYED'
                 }
             }
         }
@@ -87,8 +92,9 @@ pipeline {
             steps {
                 echo 'Running integration tests on the staging environment...'
                 script {
-                    // Example: sh 'remote-integration-test-script.sh'
-                    env.STAGING_TESTS_STATUS = 'PASSED' // Modify based on test results
+                    // Example command for integration tests on staging
+                    sh 'remote-integration-test-script.sh'
+                    env.STAGING_TESTS_STATUS = 'PASSED'
                 }
             }
         }
@@ -97,8 +103,9 @@ pipeline {
             steps {
                 echo "Deploying to production server: ${env.PRODUCTION_SERVER}"
                 script {
-                    // Example: sh 'scp target/app.war user@${PRODUCTION_SERVER}:/path/to/deploy'
-                    env.PRODUCTION_DEPLOYMENT_STATUS = 'DEPLOYED' // Adjust based on outcome
+                    // Example command to deploy to the production server
+                    sh "scp target/app.war user@${PRODUCTION_SERVER}:/path/to/deploy"
+                    env.PRODUCTION_DEPLOYMENT_STATUS = 'DEPLOYED'
                 }
             }
         }
