@@ -29,6 +29,21 @@ pipeline {
                     env.TEST_STATUS = 'PASSED' // Modify this based on actual test outcomes
                 }
             }
+            post {
+                always {
+                    echo 'Sending test status notification email...'
+                    mail to: "${env.RECIPIENT_EMAIL}",
+                         subject: "Test Execution - ${currentBuild.fullDisplayName}",
+                         body: "Test Execution Status: ${env.TEST_STATUS}",
+                         attachLog: true // Sends the logs as an attachment
+                }
+                failure {
+                    echo 'Sending failure notification email...'
+                    mail to: "${env.RECIPIENT_EMAIL}",
+                         subject: "Test Execution Failure - ${currentBuild.fullDisplayName}",
+                         body: "Test Execution Failed."
+                }
+            }
         }
 
         stage('Code Analysis') {
@@ -49,6 +64,21 @@ pipeline {
                     // Placeholder for security scan command
                     // Example: sh 'findsecbugs'
                     env.SECURITY_SCAN_STATUS = 'NO VULNERABILITIES FOUND' // Adjust accordingly
+                }
+            }
+            post {
+                always {
+                    echo 'Sending security scan status notification email...'
+                    mail to: "${env.RECIPIENT_EMAIL}",
+                         subject: "Security Scan - ${currentBuild.fullDisplayName}",
+                         body: "Security Scan Status: ${env.SECURITY_SCAN_STATUS}",
+                         attachLog: true // Sends the logs as an attachment
+                }
+                failure {
+                    echo 'Sending failure notification email...'
+                    mail to: "${env.RECIPIENT_EMAIL}",
+                         subject: "Security Scan Failure - ${currentBuild.fullDisplayName}",
+                         body: "Security Scan Failed."
                 }
             }
         }
@@ -89,7 +119,7 @@ pipeline {
 
     post {
         always {
-            echo 'Sending notification email...'
+            echo 'Sending final notification email...'
             mail to: "${env.RECIPIENT_EMAIL}",
                  subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
                  body: """Pipeline execution details:
