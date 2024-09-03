@@ -9,81 +9,107 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Example build step
-                echo 'Building...'
-                // Use your build tools here e.g., Maven
+                script {
+                    // Assuming Maven as the build tool
+                    sh 'mvn clean package'
+                }
             }
         }
         
         stage('Unit and Integration Tests') {
             steps {
-                // Example test execution step
-                echo 'Running tests...'
-                // Use your test automation tools here
+                script {
+                    // Example: Run tests with Maven
+                    sh 'mvn test'
+                }
             }
             post {
                 always {
-                    // Send an email notification with logs
-                    emailext (
-                        to: "${env.RECIPIENT_EMAIL}",
-                        subject: "Jenkins Notification: Test Stage Completed",
-                        body: "The test stage has ${currentBuild.currentResult}: Check console output at ${env.BUILD_URL}",
-                        attachLog: true
-                    )
+                    script {
+                        def status = currentBuild.result ?: 'SUCCESS'
+                        def emailBody = """
+                            The Test stage completed with status: ${status}
+                            Build details at: ${env.BUILD_URL}
+                        """
+                        // Send an email notification with logs
+                        emailext(
+                            to: "${env.RECIPIENT_EMAIL}",
+                            subject: "Jenkins Notification: Test Stage - ${status}",
+                            body: emailBody,
+                            attachLog: true
+                        )
+                    }
                 }
             }
         }
         
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing code...'
-                // Integrate your code analysis tool here
+                script {
+                    // Example: Using SonarQube for code analysis
+                    sh 'mvn sonar:sonar'
+                }
             }
         }
         
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan...'
-                // Use your security scanning tools here
+                script {
+                    // Placeholder for security scan tool command
+                    echo 'Performing security scan...'
+                }
             }
             post {
                 always {
-                    // Send an email notification with logs
-                    emailext (
-                        to: "${env.RECIPIENT_EMAIL}",
-                        subject: "Jenkins Notification: Security Scan Stage Completed",
-                        body: "The security scan stage has ${currentBuild.currentResult}: Check console output at ${env.BUILD_URL}",
-                        attachLog: true
-                    )
+                    script {
+                        def status = currentBuild.result ?: 'SUCCESS'
+                        def emailBody = """
+                            The Security Scan stage completed with status: ${status}
+                            Build details at: ${env.BUILD_URL}
+                        """
+                        // Send an email notification with logs
+                        emailext(
+                            to: "${env.RECIPIENT_EMAIL}",
+                            subject: "Jenkins Notification: Security Scan - ${status}",
+                            body: emailBody,
+                            attachLog: true
+                        )
+                    }
                 }
             }
         }
         
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging...'
-                // Deploy your application to a staging environment
+                script {
+                    // Placeholder for deployment command
+                    echo 'Deploying to staging environment...'
+                }
             }
         }
         
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging...'
-                // Run integration tests on your staging environment
+                script {
+                    // Placeholder for integration testing command
+                    echo 'Running integration tests on staging...'
+                }
             }
         }
         
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production...'
-                // Deploy your application to production
+                script {
+                    // Placeholder for production deployment command
+                    echo 'Deploying to production environment...'
+                }
             }
         }
     }
     
     post {
         always {
-            // Archive the logs for each build
+            // Archive logs and other artifacts
             archiveArtifacts artifacts: '**/target/*.log', fingerprint: true
         }
     }
