@@ -4,67 +4,64 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building the code"
-                // Use a build automation tool like Maven
-                // Example: bat 'mvn clean install'
+                bat 'mvn clean package' // Builds the Maven project and packages it
             }
         }
         stage('Unit and Integration Tests') {
             steps {
                 echo "Running unit tests"
-                // Use test automation tools for unit and integration tests
-                // Example: bat 'npm test'
+                bat 'mvn test' // Runs unit tests defined in the Maven project
+                junit '**/target/surefire-reports/*.xml' // Publishes JUnit test results
             }
         }
         stage('Code Analysis') {
             steps {
                 echo "Running code analysis"
-                // Integrate a code analysis tool
-                // Example: bat 'eslint .'
+                // Add your static code analysis tool command here, e.g., SonarQube scanner
+                bat 'sonar-scanner' // Assuming SonarQube scanner is configured
             }
         }
         stage('Security Scan') {
             steps {
                 echo "Performing security scan"
-                // Use a security scanning tool
-                // Example: bat 'nmap -p 80 <target>'
+                // Add your security scanning tool command here, e.g., OWASP Dependency Check
+                bat 'dependency-check --project "YourProject" --scan "./src" --out "./security-report"'
             }
         }
         stage('Deploy to Staging') {
             steps {
                 echo "Deploying to staging server"
-                // Deploy to staging server
-                // Example: bat 'ssh user@staging-server "deploy-script.sh"'
+                // Replace 'deploy-script-command' with your staging deployment script command
+                bat 'deploy-to-staging.bat'
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo "Running integration tests on staging"
-                // Run integration tests on staging
-                // Example: bat 'npm run integration-test'
+                // Replace with your integration test command for the staging environment
+                bat 'run-integration-tests-staging.bat'
             }
         }
         stage('Deploy to Production') {
             steps {
                 echo "Deploying to production server"
-                // Deploy to production server
-                // Example: bat 'ssh user@production-server "deploy-script.sh"'
+                // Ensure proper conditions or approvals are in place before deploying to production
+                bat 'deploy-to-production.bat'
             }
         }
     }
     post {
-        failure {
-            emailext(
-                subject: 'Pipeline Failed',
-                body: 'Pipeline failed. See attached logs for details.',
-                attachLog: true,
-                to: 'shrivastavaditi14@gmail.com'
-            )
-        }
         success {
             emailext(
                 subject: 'Pipeline Succeeded',
-                body: 'Pipeline succeeded. See attached logs for details.',
-                attachLog: true,
+                body: 'The pipeline has completed successfully. You can view the detailed report in the Jenkins dashboard.',
+                to: 'shrivastavaditi14@gmail.com'
+            )
+        }
+        failure {
+            emailext(
+                subject: 'Pipeline Failed',
+                body: 'The pipeline has failed. Please check the Jenkins console for more details.',
                 to: 'shrivastavaditi14@gmail.com'
             )
         }
