@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-    // Define environment variables
     environment {
         STAGING_SERVER = 'staging.example.com'
         PRODUCTION_SERVER = 'production.example.com'
@@ -32,10 +31,11 @@ pipeline {
                     echo 'Sending notification email for test stage...'
                     emailext(
                         to: "${env.RECIPIENT_EMAIL}",
-                        subject: "Test Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                        body: """Test stage completed with status: ${env.TEST_STATUS}
+                        subject: "Test Stage - ${currentBuild.fullDisplayName} - ${env.TEST_STATUS}",
+                        body: """Test stage completed with status: ${env.TEST_STATUS}.
                                   Please see attached logs for details.""",
-                        attachmentsPattern: "**/target/surefire-reports/*.txt"
+                        attachLog: true,
+                        compressLog: true
                     )
                 }
             }
@@ -64,10 +64,11 @@ pipeline {
                     echo 'Sending notification email for security scan stage...'
                     emailext(
                         to: "${env.RECIPIENT_EMAIL}",
-                        subject: "Security Scan Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                        body: """Security scan stage completed with status: ${env.SECURITY_SCAN_STATUS}
+                        subject: "Security Scan Stage - ${currentBuild.fullDisplayName} - ${env.SECURITY_SCAN_STATUS}",
+                        body: """Security scan stage completed with status: ${env.SECURITY_SCAN_STATUS}.
                                   Please see attached logs for details.""",
-                        attachmentsPattern: "**/target/findsecbugs-reports/*.txt"
+                        attachLog: true,
+                        compressLog: true
                     )
                 }
             }
@@ -118,7 +119,9 @@ pipeline {
                          Staging Deployment Status: ${env.STAGING_DEPLOYMENT_STATUS}
                          Staging Tests Status: ${env.STAGING_TESTS_STATUS}
                          Production Deployment Status: ${env.PRODUCTION_DEPLOYMENT_STATUS}
-                         See Jenkins for more details."""
+                         See Jenkins for more details.""",
+                attachLog: true,
+                compressLog: true
             )
         }
     }
