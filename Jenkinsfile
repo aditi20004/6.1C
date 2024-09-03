@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    tools {
+        // Ensure the name 'Maven' matches exactly with the name configured in Jenkins
+        maven 'Maven'
+    }
     environment {
         STAGING_SERVER = 'staging.example.com'
         PRODUCTION_SERVER = 'production.example.com'
@@ -9,46 +13,46 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                bat 'mvn clean install' // Using bat for Windows
+                bat 'mvn clean install' // Use 'bat' on Windows
             }
         }
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running tests...'
-                bat 'mvn test' // Using bat for Windows
+                bat 'mvn test'
             }
         }
         stage('Code Analysis') {
             steps {
                 echo 'Analyzing the code...'
-                bat 'mvn sonar:sonar' // Using bat for Windows, ensure SonarQube is configured properly
+                bat 'mvn sonar:sonar'
             }
         }
         stage('Security Scan') {
             steps {
                 echo 'Performing security scan...'
-                // For Windows, you might need a different command or tool that can be run directly or through a script
-                echo 'Security scanning tools need to be configured for Windows'
+                // You need to specify your security scanning tools or commands here
+                echo 'Placeholder for security scanning tools or commands'
             }
         }
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to staging server...'
-                // Implement deployment via scripts or tools that work on Windows
-                echo 'Deploy script or tool needs to be configured for Windows'
+                // Replace this echo with actual deployment commands or scripts
+                echo 'Placeholder for deployment commands or scripts'
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                bat 'mvn verify -Denvironment=staging' // Using bat for Windows
+                bat 'mvn verify -Denvironment=staging'
             }
         }
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to production server...'
-                // Implement deployment via scripts or tools that work on Windows
-                echo 'Deploy script or tool needs to be configured for Windows'
+                // Replace this echo with actual deployment commands or scripts
+                echo 'Placeholder for deployment commands or scripts'
             }
         }
     }
@@ -59,7 +63,6 @@ pipeline {
                 body: """<p>The Jenkins Pipeline ${currentBuild.fullDisplayName} has completed.</p>
                          <p>Status: ${currentBuild.currentResult}</p>
                          <p>Check the build details at: <a href='${BUILD_URL}'>${BUILD_URL}</a></p>""",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
                 to: "${RECIPIENT_EMAIL}"
             )
         }
