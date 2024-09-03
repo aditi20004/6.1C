@@ -1,88 +1,70 @@
 pipeline {
     agent any
-
     stages {
-        // Stage 1: Build
         stage('Build') {
             steps {
-                script {
-                    // Maven is used for Java projects
-                    sh 'mvn clean install'
-                }
+                sh 'echo "Building the code"'
+                // Use a build automation tool like Maven
+                // Example: sh 'mvn clean install'
             }
         }
-
-        // Stage 2: Unit and Integration Tests
         stage('Unit and Integration Tests') {
             steps {
-                script {
-                    // Example: Using JUnit for Java projects and integrating with Jenkins
-                    sh 'mvn test'
-                }
+                sh 'echo "Running unit tests"'
+                // Use test automation tools for unit and integration tests
+                // Example: sh 'npm test'
             }
         }
-
-        // Stage 3: Code Analysis
         stage('Code Analysis') {
             steps {
-                script {
-                    // Example: Using SonarQube for code quality analysis
-                    sh 'mvn sonar:sonar'
-                }
+                sh 'echo "Running code analysis"'
+                // Integrate a code analysis tool
+                // Example: sh 'eslint .'
             }
         }
-
-        // Stage 4: Security Scan
         stage('Security Scan') {
             steps {
-                script {
-                    // Example: Using OWASP ZAP for security scanning
-                    sh 'zap-cli quick-scan --self-contained --start-options "-config api.disablekey=true" http://localhost:8080'
-                }
+                sh 'echo "Performing security scan"'
+                // Use a security scanning tool
+                // Example: sh 'nmap -p 80 <target>'
             }
         }
-
-        // Stage 5: Deploy to Staging
         stage('Deploy to Staging') {
             steps {
-                script {
-                    // Deploy to a staging server
-                    sh 'ssh user@staging-server "deploy-script.sh"'
-                }
+                sh 'echo "Deploying to staging server"'
+                // Deploy to staging server
+                // Example: sh 'ssh user@staging-server "deploy-script.sh"'
             }
         }
-
-        // Stage 6: Integration Tests on Staging
         stage('Integration Tests on Staging') {
             steps {
-                script {
-                    // Run integration tests on the staging environment
-                    sh 'mvn verify -Pintegration-tests'
-                }
+                sh 'echo "Running integration tests on staging"'
+                // Run integration tests on staging
+                // Example: sh 'npm run integration-test'
             }
         }
-
-        // Stage 7: Deploy to Production
         stage('Deploy to Production') {
             steps {
-                script {
-                    // Deploy to a production server
-                    sh 'ssh user@production-server "deploy-script.sh"'
-                }
+                sh 'echo "Deploying to production server"'
+                // Deploy to production server
+                // Example: sh 'ssh user@production-server "deploy-script.sh"'
             }
         }
     }
-
     post {
-        // Send notification emails after test and security scan stages
-        always {
-            // Adjust as needed to target specific stages if conditional emailing is desired
+        failure {
             emailext(
-                subject: 'Jenkins Pipeline ${STAGE_NAME} Status: ${BUILD_STATUS}',
-                body: '''<p>Pipeline ${BUILD_STATUS} for ${STAGE_NAME}.</p>
-                         <p>See attached logs for details.</p>''',
+                subject: 'Pipeline Failed',
+                body: 'Pipeline failed. See attached logs for details.',
                 attachLog: true,
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                to: 'shrivastavaditi14@gmail.com'
+            )
+        }
+        success {
+            emailext(
+                subject: 'Pipeline Succeeded',
+                body: 'Pipeline succeeded. See attached logs for details.',
+                attachLog: true,
                 to: 'shrivastavaditi14@gmail.com'
             )
         }
