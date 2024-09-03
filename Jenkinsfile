@@ -9,49 +9,46 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                // Example: Using Maven as the build tool
-                sh 'mvn clean install'
+                bat 'mvn clean install' // Using bat for Windows
             }
         }
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running tests...'
-                // Example: Using JUnit for unit tests and Selenium for integration tests
-                sh 'mvn test'
+                bat 'mvn test' // Using bat for Windows
             }
         }
         stage('Code Analysis') {
             steps {
                 echo 'Analyzing the code...'
-                // Example: Using SonarQube for code quality analysis
-                sh 'mvn sonar:sonar'
+                bat 'mvn sonar:sonar' // Using bat for Windows, ensure SonarQube is configured properly
             }
         }
         stage('Security Scan') {
             steps {
                 echo 'Performing security scan...'
-                // Example: Using OWASP ZAP for security scans
-                sh 'zap-cli quick-scan --self-contained -o http://localhost:8080'
+                // For Windows, you might need a different command or tool that can be run directly or through a script
+                echo 'Security scanning tools need to be configured for Windows'
             }
         }
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to staging server...'
-                // Deployment script or tool command
-                sh 'scp -r ./target/myapp.war user@${STAGING_SERVER}:/path/to/deploy'
+                // Implement deployment via scripts or tools that work on Windows
+                echo 'Deploy script or tool needs to be configured for Windows'
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                // Use a tool suitable for your environment
-                sh 'mvn verify -Denvironment=staging'
+                bat 'mvn verify -Denvironment=staging' // Using bat for Windows
             }
         }
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to production server...'
-                sh 'scp -r ./target/myapp.war user@${PRODUCTION_SERVER}:/path/to/deploy'
+                // Implement deployment via scripts or tools that work on Windows
+                echo 'Deploy script or tool needs to be configured for Windows'
             }
         }
     }
