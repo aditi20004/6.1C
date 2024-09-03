@@ -6,6 +6,7 @@ pipeline {
         STAGING_SERVER = 'staging.example.com'
         PRODUCTION_SERVER = 'production.example.com'
         RECIPIENT_EMAIL = 'shrivastavaditi14@gmail.com'
+        LOG_DIR = 'logs'
     }
 
     stages {
@@ -25,8 +26,18 @@ pipeline {
                 echo 'Running unit and integration tests...'
                 script {
                     // Placeholder for test command
-                    // Example: sh 'mvn test'
+                    // Example: sh 'mvn test > ${env.LOG_DIR}/unit_integration_tests.log'
                     env.TEST_STATUS = 'PASSED' // Modify this based on actual test outcomes
+                }
+            }
+            post {
+                always {
+                    // Send email notification with logs
+                    echo 'Sending notification email for Unit and Integration Tests...'
+                    emailext attachmentsPattern: "${env.LOG_DIR}/unit_integration_tests.log",
+                             to: "${env.RECIPIENT_EMAIL}",
+                             subject: "Unit and Integration Tests - ${env.TEST_STATUS}",
+                             body: "The Unit and Integration Tests have ${env.TEST_STATUS}. Please find the logs attached."
                 }
             }
         }
@@ -47,8 +58,18 @@ pipeline {
                 echo 'Performing security scan...'
                 script {
                     // Placeholder for security scan command
-                    // Example: sh 'findsecbugs'
+                    // Example: sh 'findsecbugs > ${env.LOG_DIR}/security_scan.log'
                     env.SECURITY_SCAN_STATUS = 'NO VULNERABILITIES FOUND' // Adjust accordingly
+                }
+            }
+            post {
+                always {
+                    // Send email notification with logs
+                    echo 'Sending notification email for Security Scan...'
+                    emailext attachmentsPattern: "${env.LOG_DIR}/security_scan.log",
+                             to: "${env.RECIPIENT_EMAIL}",
+                             subject: "Security Scan - ${env.SECURITY_SCAN_STATUS}",
+                             body: "The Security Scan has completed with status: ${env.SECURITY_SCAN_STATUS}. Please find the logs attached."
                 }
             }
         }
@@ -89,7 +110,7 @@ pipeline {
 
     post {
         always {
-            echo 'Sending notification email...'
+            echo 'Sending final notification email...'
             mail to: "${env.RECIPIENT_EMAIL}",
                  subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
                  body: """Pipeline execution details:
