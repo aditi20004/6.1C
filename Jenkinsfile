@@ -32,11 +32,13 @@ pipeline {
             post {
                 always {
                     echo 'Sending notification email for test stage...'
-                    mail to: "${env.RECIPIENT_EMAIL}",
-                         subject: "Test Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                         body: """Test stage completed with status: ${env.TEST_STATUS}
-                                  Logs attached for detailed review.""",
-                         attachLog: true
+                    emailext(
+                        to: "${env.RECIPIENT_EMAIL}",
+                        subject: "Test Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                        body: """Test stage completed with status: ${env.TEST_STATUS}
+                                  Please see attached logs for details.""",
+                        attachmentsPattern: "**/target/surefire-reports/*.txt"
+                    )
                 }
             }
         }
@@ -64,11 +66,13 @@ pipeline {
             post {
                 always {
                     echo 'Sending notification email for security scan stage...'
-                    mail to: "${env.RECIPIENT_EMAIL}",
-                         subject: "Security Scan Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                         body: """Security scan stage completed with status: ${env.SECURITY_SCAN_STATUS}
-                                  Logs attached for detailed review.""",
-                         attachLog: true
+                    emailext(
+                        to: "${env.RECIPIENT_EMAIL}",
+                        subject: "Security Scan Stage - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                        body: """Security scan stage completed with status: ${env.SECURITY_SCAN_STATUS}
+                                  Please see attached logs for details.""",
+                        attachmentsPattern: "**/target/findsecbugs-reports/*.txt"
+                    )
                 }
             }
         }
@@ -110,17 +114,19 @@ pipeline {
     post {
         always {
             echo 'Sending final notification email...'
-            mail to: "${env.RECIPIENT_EMAIL}",
-                 subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                 body: """Pipeline execution details:
-                          Build Status: ${env.BUILD_STATUS}
-                          Test Status: ${env.TEST_STATUS}
-                          Code Analysis Status: ${env.CODE_ANALYSIS_STATUS}
-                          Security Scan Status: ${env.SECURITY_SCAN_STATUS}
-                          Staging Deployment Status: ${env.STAGING_DEPLOYMENT_STATUS}
-                          Staging Tests Status: ${env.STAGING_TESTS_STATUS}
-                          Production Deployment Status: ${env.PRODUCTION_DEPLOYMENT_STATUS}
-                          See Jenkins for more details."""
+            emailext(
+                to: "${env.RECIPIENT_EMAIL}",
+                subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                body: """Pipeline execution details:
+                         Build Status: ${env.BUILD_STATUS}
+                         Test Status: ${env.TEST_STATUS}
+                         Code Analysis Status: ${env.CODE_ANALYSIS_STATUS}
+                         Security Scan Status: ${env.SECURITY_SCAN_STATUS}
+                         Staging Deployment Status: ${env.STAGING_DEPLOYMENT_STATUS}
+                         Staging Tests Status: ${env.STAGING_TESTS_STATUS}
+                         Production Deployment Status: ${env.PRODUCTION_DEPLOYMENT_STATUS}
+                         See Jenkins for more details."""
+            )
         }
     }
 }
