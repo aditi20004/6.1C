@@ -6,26 +6,15 @@ pipeline {
         STAGING_SERVER = 'staging.example.com'
         PRODUCTION_SERVER = 'production.example.com'
         RECIPIENT_EMAIL = 'shrivastavaditi14@gmail.com'
-        LOG_DIR = 'logs'
     }
 
     stages {
-        stage('Prepare Workspace') {
-            steps {
-                echo 'Preparing the workspace...'
-                script {
-                    // Ensure the logs directory exists
-                    bat "if not exist ${LOG_DIR} mkdir ${LOG_DIR}"
-                }
-            }
-        }
-
         stage('Build') {
             steps {
                 echo 'Building the application using Maven...'
                 script {
-                    bat 'echo Building the application > ${LOG_DIR}\\build.log'
-                    // Example: bat 'mvn clean install >> ${LOG_DIR}\\build.log 2>&1'
+                    // Placeholder for the build command
+                    // Example: sh 'mvn clean install'
                     env.BUILD_STATUS = 'SUCCESSFUL' // Modify this based on actual build outcome
                 }
             }
@@ -35,8 +24,8 @@ pipeline {
             steps {
                 echo 'Running unit and integration tests...'
                 script {
-                    bat 'echo Running unit and integration tests > ${LOG_DIR}\\unit_integration_tests.log'
-                    // Example: bat 'mvn test >> ${LOG_DIR}\\unit_integration_tests.log 2>&1'
+                    // Placeholder for test command
+                    // Example: sh 'mvn test'
                     env.TEST_STATUS = 'PASSED' // Modify this based on actual test outcomes
                 }
             }
@@ -46,8 +35,8 @@ pipeline {
             steps {
                 echo 'Analyzing code with SonarQube...'
                 script {
-                    bat 'echo Analyzing code > ${LOG_DIR}\\code_analysis.log'
-                    // Example: bat 'sonar-scanner >> ${LOG_DIR}\\code_analysis.log 2>&1'
+                    // Placeholder for code analysis command
+                    // Example: sh 'sonar-scanner'
                     env.CODE_ANALYSIS_STATUS = 'COMPLETED' // Adjust based on actual results
                 }
             }
@@ -57,8 +46,8 @@ pipeline {
             steps {
                 echo 'Performing security scan...'
                 script {
-                    bat 'echo Performing security scan > ${LOG_DIR}\\security_scan.log'
-                    // Example: bat 'findsecbugs >> ${LOG_DIR}\\security_scan.log 2>&1'
+                    // Placeholder for security scan command
+                    // Example: sh 'findsecbugs'
                     env.SECURITY_SCAN_STATUS = 'NO VULNERABILITIES FOUND' // Adjust accordingly
                 }
             }
@@ -68,8 +57,8 @@ pipeline {
             steps {
                 echo "Deploying to staging server: ${env.STAGING_SERVER}"
                 script {
-                    bat 'echo Deploying to staging > ${LOG_DIR}\\staging_deploy.log'
-                    // Example: bat 'scp target\\app.war user@${STAGING_SERVER}:/path/to/deploy >> ${LOG_DIR}\\staging_deploy.log 2>&1'
+                    // Placeholder for deployment command
+                    // Example: sh 'scp target/app.war user@${STAGING_SERVER}:/path/to/deploy'
                     env.STAGING_DEPLOYMENT_STATUS = 'DEPLOYED' // Adjust based on outcome
                 }
             }
@@ -79,8 +68,8 @@ pipeline {
             steps {
                 echo 'Running integration tests on the staging environment...'
                 script {
-                    bat 'echo Running integration tests on staging > ${LOG_DIR}\\staging_tests.log'
-                    // Example: bat 'remote-integration-test-script.sh >> ${LOG_DIR}\\staging_tests.log 2>&1'
+                    // Placeholder for integration tests on staging
+                    // Example: sh 'remote-integration-test-script.sh'
                     env.STAGING_TESTS_STATUS = 'PASSED' // Modify based on test results
                 }
             }
@@ -90,8 +79,8 @@ pipeline {
             steps {
                 echo "Deploying to production server: ${env.PRODUCTION_SERVER}"
                 script {
-                    bat 'echo Deploying to production > ${LOG_DIR}\\production_deploy.log'
-                    // Example: bat 'scp target\\app.war user@${PRODUCTION_SERVER}:/path/to/deploy >> ${LOG_DIR}\\production_deploy.log 2>&1'
+                    // Placeholder for deployment command
+                    // Example: sh 'scp target/app.war user@${PRODUCTION_SERVER}:/path/to/deploy'
                     env.PRODUCTION_DEPLOYMENT_STATUS = 'DEPLOYED' // Adjust based on outcome
                 }
             }
@@ -100,8 +89,7 @@ pipeline {
 
     post {
         always {
-            // Sending final summary email without attachments
-            echo 'Sending final summary email...'
+            echo 'Sending notification email...'
             mail to: "${env.RECIPIENT_EMAIL}",
                  subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
                  body: """Pipeline execution details:
@@ -113,13 +101,6 @@ pipeline {
                           Staging Tests Status: ${env.STAGING_TESTS_STATUS}
                           Production Deployment Status: ${env.PRODUCTION_DEPLOYMENT_STATUS}
                           See Jenkins for more details."""
-
-            // Sending an email with logs as attachments
-            echo 'Sending email with logs attached...'
-            emailext attachmentsPattern: "${env.LOG_DIR}\\*.log",
-                     to: "${env.RECIPIENT_EMAIL}",
-                     subject: "Pipeline Logs for ${currentBuild.fullDisplayName}",
-                     body: "Please find the logs from the pipeline execution attached."
         }
     }
 }
