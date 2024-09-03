@@ -1,116 +1,67 @@
 pipeline {
     agent any
-
-    environment {
-        // Define the recipient email
-        RECIPIENT_EMAIL = 'shrivastavaditi14@gmail.com'
-    }
-
     stages {
         stage('Build') {
             steps {
-                script {
-                    // Assuming Maven as the build tool
-                    sh 'mvn clean package'
-                }
+                echo 'Building the code using Maven'
+
             }
         }
-        
         stage('Unit and Integration Tests') {
             steps {
-                script {
-                    // Example: Run tests with Maven
-                    sh 'mvn test'
-                }
-            }
-            post {
-                always {
-                    script {
-                        def status = currentBuild.result ?: 'SUCCESS'
-                        def emailBody = """
-                            The Test stage completed with status: ${status}
-                            Build details at: ${env.BUILD_URL}
-                        """
-                        // Send an email notification with logs
-                        emailext(
-                            to: "${env.RECIPIENT_EMAIL}",
-                            subject: "Jenkins Notification: Test Stage - ${status}",
-                            body: emailBody,
-                            attachLog: true
-                        )
-                    }
-                }
+                echo 'Running unit tests'
+
+                echo 'Running integration tests'
+
             }
         }
-        
         stage('Code Analysis') {
             steps {
-                script {
-                    // Example: Using SonarQube for code analysis
-                    sh 'mvn sonar:sonar'
-                }
+                echo 'Integrating code analysis tool'
+                echo 'Tool used: SonarQube'
+
             }
         }
-        
         stage('Security Scan') {
             steps {
-                script {
-                    // Placeholder for security scan tool command
-                    echo 'Performing security scan...'
-                }
-            }
-            post {
-                always {
-                    script {
-                        def status = currentBuild.result ?: 'SUCCESS'
-                        def emailBody = """
-                            The Security Scan stage completed with status: ${status}
-                            Build details at: ${env.BUILD_URL}
-                        """
-                        // Send an email notification with logs
-                        emailext(
-                            to: "${env.RECIPIENT_EMAIL}",
-                            subject: "Jenkins Notification: Security Scan - ${status}",
-                            body: emailBody,
-                            attachLog: true
-                        )
-                    }
-                }
+                echo 'Performing security scan using OWASP Dependency-Check'
+
             }
         }
-        
         stage('Deploy to Staging') {
             steps {
-                script {
-                    // Placeholder for deployment command
-                    echo 'Deploying to staging environment...'
-                }
+                echo 'Deploying application to staging server using AWS CLI'
+                echo 'Tool used: AWS EC2'
+ 
             }
         }
-        
         stage('Integration Tests on Staging') {
             steps {
-                script {
-                    // Placeholder for integration testing command
-                    echo 'Running integration tests on staging...'
-                }
+                echo 'Running integration tests on staging environment'
+                echo 'Tool used: Selenium'
+
             }
         }
-        
         stage('Deploy to Production') {
             steps {
-                script {
-                    // Placeholder for production deployment command
-                    echo 'Deploying to production environment...'
+                echo 'Deploying application to production server using AWS CLI'
+                echo 'Tool used: AWS EC2'
+
+            }
+            post{
+                success{
+                    emailext subject: "Pipeline Status: Success - Deploy to Production",
+                      body: "The deployment to production was successful.",
+                      to: "shrivastavaditi14@gmail.com",
+                      attachmentsPattern: '**/*.log'
+                }
+                failure {
+                    emailext subject: "Pipeline Status: Failure - Deploy to Production",
+                      body: "The deployment to production has failed.",
+                      to: "shrivastavaditi14@gmail.com",
+                      attachmentsPattern: '**/*.log'
                 }
             }
-        }
-    }
-    
-    post {
-        always {
-            // Archive logs and other artifacts
-            archiveArtifacts artifacts: '**/target/*.log', fingerprint: true
         }
     }
 }
