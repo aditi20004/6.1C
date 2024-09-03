@@ -10,6 +10,16 @@ pipeline {
     }
 
     stages {
+        stage('Prepare Workspace') {
+            steps {
+                echo 'Preparing the workspace...'
+                script {
+                    // Ensure the logs directory exists
+                    bat "if not exist ${LOG_DIR} mkdir ${LOG_DIR}"
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 echo 'Building the application using Maven...'
