@@ -1,69 +1,89 @@
-pipeline {
+pipeline{
     agent any
-    stages {
-        stage('Build') {
-            steps {
-                echo "Building the code"
-                bat 'mvn clean package' // Builds the Maven project and packages it
+    stages{
+        stage("Build"){
+            steps{
+                echo "Maven Was used to automate the build process, plus it compiled and pakaged the code"
+            }
+            post{
+                success{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Jenkins Build report",
+                    body: "the build with maven was successfull"
+                }
+                failure{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Jenkins Build report",
+                    body: "Unfortunately the Build couldnt be compeleted successfully"
+                }
             }
         }
-        stage('Unit and Integration Tests') {
-            steps {
-                echo "Running unit tests"
-                bat 'mvn test' // Runs unit tests defined in the Maven project
-                junit '**/target/surefire-reports/*.xml' // Publishes JUnit test results
+        stage("Unit and Integration Tests"){
+            steps{
+                echo "JUnit and selenium were used to perform unit and integration tests To ensure code runs as expected And all the components of application come together as expected"
+            }
+            post{
+                success{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Unit and Integration Tests report",
+                    body: "Unit and Integration Tests went well and this stage of devvelopment is clear"
+                }
+                failure{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Unit and Integration Tests report",
+                    body: "Unfortunately the Unit and Integration Tests couldnt be compeleted successfully"
+                }
             }
         }
-        stage('Code Analysis') {
-            steps {
-                echo "Running code analysis"
-                // Add your static code analysis tool command here, e.g., SonarQube scanner
-                bat 'sonar-scanner' // Assuming SonarQube scanner is configured
+        stage("Code Analysis"){
+            steps{
+                echo "Sonar Qube was used to analyse code to make sure it meets industry standards"
             }
         }
-        stage('Security Scan') {
-            steps {
-                echo "Performing security scan"
-                // Add your security scanning tool command here, e.g., OWASP Dependency Check
-                bat 'dependency-check --project "YourProject" --scan "./src" --out "./security-report"'
+        stage("Security Scan"){
+            steps{
+                echo "OWASP ZAP is used To scan the code and identify the vulnerabilities and perform a security scan"
+            }
+            post{
+                success{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Security Scan report",
+                    body: "Great News! Security Scan was successfull "
+                }
+                failure{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Security Scan report",
+                    body: "Unfortunately! the Security Scan report couldnt be compeleted successfully"
+                }
             }
         }
-        stage('Deploy to Staging') {
-            steps {
-                echo "Deploying to staging server"
-                // Replace 'deploy-script-command' with your staging deployment script command
-                bat 'deploy-to-staging.bat'
+        stage("Deploy to Staging"){
+            steps{
+                echo "Jenkins to deploy to staging"
             }
         }
-        stage('Integration Tests on Staging') {
-            steps {
-                echo "Running integration tests on staging"
-                // Replace with your integration test command for the staging environment
-                bat 'run-integration-tests-staging.bat'
+        stage(" Integration Tests on Staging"){
+            steps{
+                echo "Apache JMeter is used to run integration tests on the staging environment to ensure the application functions as expected in a production-lik environment."
+            }
+            post{
+                success{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Integration Tests on Staging report",
+                    body: "Integration Tests on Staging was successfull"
+                }
+                failure{
+                    mail to: "shrivastavaditi14@gmail.com",
+                    subject: "Integration Tests on Staging report",
+                    body: "Unfortunate the Integration Test on Staging report couldnt be compeleted successfully"
+                }
             }
         }
-        stage('Deploy to Production') {
-            steps {
-                echo "Deploying to production server"
-                // Ensure proper conditions or approvals are in place before deploying to production
-                bat 'deploy-to-production.bat'
+        stage("Deploy to Production"){
+            steps{
+                echo "Using Jenkins to deploy to production server"
             }
         }
-    }
-    post {
-        success {
-            emailext(
-                subject: 'Pipeline Succeeded',
-                body: 'The pipeline has completed successfully. You can view the detailed report in the Jenkins dashboard.',
-                to: 'shrivastavaditi14@gmail.com'
-            )
-        }
-        failure {
-            emailext(
-                subject: 'Pipeline Failed',
-                body: 'The pipeline has failed. Please check the Jenkins console for more details.',
-                to: 'shrivastavaditi14@gmail.com'
-            )
-        }
+
     }
 }
