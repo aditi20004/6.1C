@@ -101,6 +101,6 @@ pipeline {
                           Staging Tests Status: ${env.STAGING_TESTS_STATUS}
                           Production Deployment Status: ${env.PRODUCTION_DEPLOYMENT_STATUS}
                           See Jenkins for more details."""
-        }
-    }
+        }
+    }
 }
