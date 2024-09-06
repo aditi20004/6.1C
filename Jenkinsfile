@@ -1,89 +1,106 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage("Build"){
-            steps{
-                echo "Maven Was used to automate the build process, plus it compiled and pakaged the code"
-            }
-            post{
-                success{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Jenkins Build report",
-                    body: "the build with maven was successfull"
+
+    // Define environment variables
+    environment {
+        STAGING_SERVER = 'staging.example.com'
+        PRODUCTION_SERVER = 'production.example.com'
+        RECIPIENT_EMAIL = 'shrivastavaditi14@gmail.com'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the application using Maven...'
+                script {
+                    // Placeholder for the build command
+                    // Example: sh 'mvn clean install'
+                    env.BUILD_STATUS = 'SUCCESSFUL' // Modify this based on actual build outcome
                 }
-                failure{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Jenkins Build report",
-                    body: "Unfortunately the Build couldnt be compeleted successfully"
-                }
-            }
-        }
-        stage("Unit and Integration Tests"){
-            steps{
-                echo "JUnit and selenium were used to perform unit and integration tests To ensure code runs as expected And all the components of application come together as expected"
-            }
-            post{
-                success{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Unit and Integration Tests report",
-                    body: "Unit and Integration Tests went well and this stage of devvelopment is clear"
-                }
-                failure{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Unit and Integration Tests report",
-                    body: "Unfortunately the Unit and Integration Tests couldnt be compeleted successfully"
-                }
-            }
-        }
-        stage("Code Analysis"){
-            steps{
-                echo "Sonar Qube was used to analyse code to make sure it meets industry standards"
-            }
-        }
-        stage("Security Scan"){
-            steps{
-                echo "OWASP ZAP is used To scan the code and identify the vulnerabilities and perform a security scan"
-            }
-            post{
-                success{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Security Scan report",
-                    body: "Great News! Security Scan was successfull "
-                }
-                failure{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Security Scan report",
-                    body: "Unfortunately! the Security Scan report couldnt be compeleted successfully"
-                }
-            }
-        }
-        stage("Deploy to Staging"){
-            steps{
-                echo "Jenkins to deploy to staging"
-            }
-        }
-        stage(" Integration Tests on Staging"){
-            steps{
-                echo "Apache JMeter is used to run integration tests on the staging environment to ensure the application functions as expected in a production-lik environment."
-            }
-            post{
-                success{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Integration Tests on Staging report",
-                    body: "Integration Tests on Staging was successfull"
-                }
-                failure{
-                    mail to: "shrivastavaditi14@gmail.com",
-                    subject: "Integration Tests on Staging report",
-                    body: "Unfortunate the Integration Test on Staging report couldnt be compeleted successfully"
-                }
-            }
-        }
-        stage("Deploy to Production"){
-            steps{
-                echo "Using Jenkins to deploy to production server"
             }
         }
 
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Running unit and integration tests...'
+                script {
+                    // Placeholder for test command
+                    // Example: sh 'mvn test'
+                    env.TEST_STATUS = 'PASSED' // Modify this based on actual test outcomes
+                }
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                echo 'Analyzing code with SonarQube...'
+                script {
+                    // Placeholder for code analysis command
+                    // Example: sh 'sonar-scanner'
+                    env.CODE_ANALYSIS_STATUS = 'COMPLETED' // Adjust based on actual results
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Performing security scan...'
+                script {
+                    // Placeholder for security scan command
+                    // Example: sh 'findsecbugs'
+                    env.SECURITY_SCAN_STATUS = 'NO VULNERABILITIES FOUND' // Adjust accordingly
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo "Deploying to staging server: ${env.STAGING_SERVER}"
+                script {
+                    // Placeholder for deployment command
+                    // Example: sh 'scp target/app.war user@${STAGING_SERVER}:/path/to/deploy'
+                    env.STAGING_DEPLOYMENT_STATUS = 'DEPLOYED' // Adjust based on outcome
+                }
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on the staging environment...'
+                script {
+                    // Placeholder for integration tests on staging
+                    // Example: sh 'remote-integration-test-script.sh'
+                    env.STAGING_TESTS_STATUS = 'PASSED' // Modify based on test results
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo "Deploying to production server: ${env.PRODUCTION_SERVER}"
+                script {
+                    // Placeholder for deployment command
+                    // Example: sh 'scp target/app.war user@${PRODUCTION_SERVER}:/path/to/deploy'
+                    env.PRODUCTION_DEPLOYMENT_STATUS = 'DEPLOYED' // Adjust based on outcome
+                }
+            }
+        }
     }
+
+    post {
+        always {
+            echo 'Sending notification email...'
+            mail to: "${env.RECIPIENT_EMAIL}",
+                 subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                 body: """Pipeline execution details:
+                          Build Status: ${env.BUILD_STATUS}
+                          Test Status: ${env.TEST_STATUS}
+                          Code Analysis Status: ${env.CODE_ANALYSIS_STATUS}
+                          Security Scan Status: ${env.SECURITY_SCAN_STATUS}
+                          Staging Deployment Status: ${env.STAGING_DEPLOYMENT_STATUS}
+                          Staging Tests Status: ${env.STAGING_TESTS_STATUS}
+                          Production Deployment Status: ${env.PRODUCTION_DEPLOYMENT_STATUS}
+                          See Jenkins for more details."""
+        }
+    }
 }
